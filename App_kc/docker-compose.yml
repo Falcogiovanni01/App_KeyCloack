@@ -9,9 +9,20 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-      
+        # --- CONFIGURAZIONE PER LA GRAFICA (CSS) ---
+      # Abilita HTTP (no HTTPS)
+      KC_HTTP_ENABLED: "true"
+      # Disabilita controlli rigidi sull'hostname (utile in dev)
+      KC_HOSTNAME_STRICT: "false"
+      # Forza l'uso di localhost:8180 per le risorse pubbliche
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_PORT: 8080
+      # Forza l'URL per l'amministrazione
+      KC_HOSTNAME_ADMIN_URL: http://localhost:8080
+      # Gestione Proxy (importante se usi Docker)
+      KC_PROXY: edge
     ports:
-      - "8180:8080"
+      - "8080:8080"
     volumes:
       - ./dati_keycloak:/opt/keycloak/data/
   # --- 2. MONGODB ---
@@ -37,6 +48,8 @@ services:
       
       ME_CONFIG_BASICAUTH_USERNAME: admin
       ME_CONFIG_BASICAUTH_PASSWORD: admin
+
+      KC_HOSTNAME_URL: http://localhost:8180
       
     ports:
       - "8082:8081"
