@@ -58,7 +58,6 @@ public class IndexController {
     // REGISTRAZIONE
     @GetMapping("/registrazione")
     public String showRegister() {
-        // Cerca il file registrazione.html in templates
         return "registrazione";
     }
 
@@ -168,6 +167,7 @@ public class IndexController {
     }
 
     @PostMapping("/gestione/delete/{id}")
+    @getRole
     public String deletePiatto(@PathVariable String id) {
         menuService.deletePiatto(id);
         return "redirect:/gestione?delete_success=true";

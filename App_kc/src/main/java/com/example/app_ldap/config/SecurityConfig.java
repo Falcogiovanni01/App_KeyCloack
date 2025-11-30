@@ -27,35 +27,27 @@ public class SecurityConfig {
                                                 // 1. Risorse statiche e Home (Pubbliche)
                                                 .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/error")
                                                 .permitAll()
-
                                                 // 2. Protezione Pagine basata sui Ruoli (letti da Keycloak)
+                                                .requestMatchers("/", "/home").permitAll()
                                                 .requestMatchers("/gestione").hasRole("ADMIN")
-                                                .requestMatchers("/ordini").hasAnyRole("USER", "ADMIN")
-
-                                                // 3. Tutto il resto richiede login
+                                                .requestMatchers("/dashboard", "/ordini").hasAnyRole("USER", "ADMIN")
                                                 .anyRequest().authenticated())
                                 .csrf(csrf -> csrf.disable()) // Opzionale, per semplicità
-
                                 // --- OAUTH2 LOGIN (Il cuore di Keycloak) ---
                                 .oauth2Login(oauth2 -> oauth2
                                                 .defaultSuccessUrl("/dashboard", true) // Dopo il login su Keycloak,
-                                                                                       // torna qui
                                                 .userInfoEndpoint(userInfo -> userInfo
                                                                 .userAuthoritiesMapper(userAuthoritiesMapper()) // per
                                                                                                                 // leggere
                                                                                                                 // i
                                                                                                                 // ruoli
-                                                                                                                // //
-                                                                                                                // QUI
 
                                                 ))
-
                                 // --- LOGOUT ---
                                 // Logout standard di Spring
                                 .logout(logout -> logout
                                                 .logoutSuccessUrl("/")
                                                 .permitAll());
-
                 return http.build();
         }
 
@@ -93,6 +85,7 @@ public class SecurityConfig {
                                         }
                                 }
                         });
+                        System.out.println("Mapped Authorities: " + mappedAuthorities);
                         return mappedAuthorities;
                 };
         }
