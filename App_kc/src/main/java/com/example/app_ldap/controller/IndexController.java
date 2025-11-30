@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.app_ldap.entity.MenuService;
 import com.example.app_ldap.entity.Ordine;
 import com.example.app_ldap.entity.Piatto;
 import com.example.app_ldap.entity.RiepilogoOrdine;
 import com.example.app_ldap.repository.OrdineRepository;
 import com.example.app_ldap.repository.PiattoRepository;
+import com.example.app_ldap.service.MenuService;
 import com.example.app_ldap.service.XacmlService;
 
 @Controller
@@ -55,6 +55,7 @@ public class IndexController {
     // --- 2. DASHBOARD ---
     @GetMapping("/dashboard")
     public String showDashboard(Authentication auth, Model model) {
+        System.out.println("---- DASHBOARD ACCESS:"+ auth.toString());
         String role = getUserRole(auth);
 
         // Controllo XACML (Autorizzazione basata su attributi/ruoli)

@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # --- 1. KEYCLOAK ---
+  # --- 1. KEYCLOAK (Spostato su 8180) ---
   keycloak:
     image: quay.io/keycloak/keycloak:24.0.1
     container_name: mensa-keycloak
@@ -9,22 +9,23 @@ services:
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
-        # --- CONFIGURAZIONE PER LA GRAFICA (CSS) ---
-      # Abilita HTTP (no HTTPS)
+      
+      # --- CONFIGURAZIONE RETE (Corretta) ---
+      # Abilita HTTP (niente HTTPS in locale)
       KC_HTTP_ENABLED: "true"
-      # Disabilita controlli rigidi sull'hostname (utile in dev)
       KC_HOSTNAME_STRICT: "false"
-      # Forza l'uso di localhost:8180 per le risorse pubbliche
-      KC_HOSTNAME: localhost
-      KC_HOSTNAME_PORT: 8080
-      # Forza l'URL per l'amministrazione
-      KC_HOSTNAME_ADMIN_URL: http://localhost:8080
-      # Gestione Proxy (importante se usi Docker)
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      
+      KC_HOSTNAME_URL: http://localhost:8180     
+      
+      
       KC_PROXY: edge
     ports:
-      - "8080:8080"
+      # Mappa la porta 8180 del tuo PC alla 8080 del container
+      - "8180:8080" 
     volumes:
       - ./dati_keycloak:/opt/keycloak/data/
+
   # --- 2. MONGODB ---
   mongodb:
     image: mongo:latest
@@ -45,18 +46,14 @@ services:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
       ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
       ME_CONFIG_MONGODB_URL: mongodb://root:rootpassword@mongodb:27017/
-      
       ME_CONFIG_BASICAUTH_USERNAME: admin
       ME_CONFIG_BASICAUTH_PASSWORD: admin
-
-      KC_HOSTNAME_URL: http://localhost:8180
-      
+      # Ho rimosso KC_HOSTNAME_URL da qui, non c'entrava con Mongo Express
     ports:
       - "8082:8081"
     depends_on:
       - mongodb
 
 volumes:
-  ldap_data:
-  ldap_config:
   mongo_data:
+  # Ho rimosso ldap_data e ldap_config perché non li usiamo più

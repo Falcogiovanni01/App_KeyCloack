@@ -1,4 +1,4 @@
-package com.example.app_ldap.entity;
+package com.example.app_ldap.service;
 
 import com.example.app_ldap.entity.*;
 import com.example.app_ldap.repository.OrdineRepository;
