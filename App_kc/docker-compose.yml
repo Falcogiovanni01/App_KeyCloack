@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # --- 1. KEYCLOAK ---
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    container_name: mensa-keycloak
+    command: start-dev
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      
+    ports:
+      - "8180:8080"
+    volumes:
+      - ./dati_keycloak:/opt/keycloak/data/
+  # --- 2. MONGODB ---
+  mongodb:
+    image: mongo:latest
+    container_name: mensa-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # --- 3. MONGO EXPRESS ---
+  mongo-express:
+    image: mongo-express
+    container_name: mensa-mongo-admin
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
+      ME_CONFIG_MONGODB_URL: mongodb://root:rootpassword@mongodb:27017/
+      
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+      
+    ports:
+      - "8082:8081"
+    depends_on:
+      - mongodb
+
+volumes:
+  ldap_data:
+  ldap_config:
+  mongo_data:

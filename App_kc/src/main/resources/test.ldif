@@ -1,0 +1,82 @@
+-------------------------------------------------------------
+
+1. STRUTTURA BASE (mensa.com)
+dn: dc=mensa,dc=com
+objectClass: top
+objectClass: domain
+dc: mensa
+
+dn: ou=people,dc=mensa,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: people
+---------------------------------------
+
+dn: ou=group,dc=mensa,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: group
+
+-------------------------------------------------------------
+
+
+dn: cn=admin,ou=group,dc=mensa,dc=com
+objectClass: top
+objectClass: posixGroup
+cn: admin
+gidNumber: 500
+
+Membri Admin (es. Giovanni)
+
+memberUid: gfalco
+
+dn: cn=user,ou=group,dc=mensa,dc=com
+objectClass: top
+objectClass: posixGroup
+cn: user
+gidNumber: 501
+
+Membri User (es. Felice e TTest)
+
+memberUid: fpalmiero
+memberUid: ttest
+
+-------------------------------------------------------------
+
+3. UTENTI in ou=people
+
+-------------------------------------------------------------
+
+Utente 1: Felice Palmiero (UID: fpalmiero)
+
+dn: cn=Felice Palmiero,ou=people,dc=mensa,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: Felice Palmiero
+sn: Palmiero
+uid: fpalmiero
+userPassword: password-in-chiaro
+uidNumber: 1001
+gidNumber: 501
+homeDirectory: /home/users/fpalmiero
+loginShell: /bin/bash
+
+Utente 2: Utente di Test (UID: ttest)
+
+dn: cn=test test,ou=people,dc=mensa,dc=com
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: test test
+sn: test
+uid: ttest
+userPassword: password-in-chiaro
+uidNumber: 1002
+gidNumber: 501
+homeDirectory: /home/users/ttest
+loginShell: /bin/bash

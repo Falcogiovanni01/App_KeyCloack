@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ordina Pranzo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <a href="/dashboard" class="flex items-center gap-2 text-gray-600 hover:text-orange-600 transition">
+                <i class="fas fa-arrow-left"></i>
+                <span class="font-semibold text-sm">Torna alla Dashboard</span>
+            </a>
+            <span class="font-bold text-orange-600">Menu del Giorno</span>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-3xl">
+        <h1 class="text-3xl font-bold mb-2">Cosa vuoi mangiare oggi?</h1>
+        <p class="text-gray-500 mb-8 text-sm">Seleziona i piatti dal menu del giorno caricato live.</p>
+        
+        <!-- NUOVO: Form che invia a /ordina/save -->
+        <form th:action="@{/ordini/save}" method="post">
+            
+            <!-- SEZIONE PRIMI -->
+            <h3 class="text-xl font-bold text-orange-600 mb-4 border-b pb-2">Primi Piatti</h3>
+            <div class="grid gap-3 mb-8">
+                <div th:each="piatto : ${listaPrimi}" class="relative">
+                    <label class="flex items-center p-4 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-orange-400 transition shadow-sm">
+                        <!-- IMPORTANTE: name="piattiId" -> Sarà una lista di stringhe nel Controller -->
+                        <input type="checkbox" name="piattiId" th:value="${piatto.id}" class="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+                        <div class="ml-4 flex-grow">
+                            <span class="block font-bold text-gray-800" th:text="${piatto.nome}">Nome Piatto</span>
+                        </div>
+                        <span class="font-bold text-gray-700" th:text="'€ ' + ${piatto.prezzo}">€ 0.00</span>
+                    </label>
+                </div>
+                <p th:if="${#lists.isEmpty(listaPrimi)}" class="text-gray-400 italic">Nessun primo piatto disponibile oggi.</p>
+            </div>
+
+            <!-- SEZIONE SECONDI -->
+            <h3 class="text-xl font-bold text-orange-600 mb-4 border-b pb-2">Secondi Piatti</h3>
+            <div class="grid gap-3 mb-8">
+                <div th:each="piatto : ${listaSecondi}" class="relative">
+                    <label class="flex items-center p-4 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-orange-400 transition shadow-sm">
+                        <input type="checkbox" name="piattiId" th:value="${piatto.id}" class="w-5 h-5 text-orange-600 border-gray-300 rounded focus:ring-orange-500">
+                        <div class="ml-4 flex-grow">
+                            <span class="block font-bold text-gray-800" th:text="${piatto.nome}">Nome Piatto</span>
+                        </div>
+                        <span class="font-bold text-gray-700" th:text="'€ ' + ${piatto.prezzo}">€ 0.00</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition flex justify-center items-center gap-2">
+                <i class="fas fa-check-circle"></i> Conferma Ordine
+            </button>
+        </form>
+    </main>
+
+</body>
+</html>

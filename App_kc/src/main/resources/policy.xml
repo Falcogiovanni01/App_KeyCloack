@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy PolicyId="MensaAccessPolicy" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+    
+    <Description>Policy: Admin gestisce tutto, User solo ordini, Tutti dashboard</Description>
+    <Target/>
+
+    <!-- ========================================== -->
+    <!-- REGOLE PER LA DASHBOARD (/dashboard)       -->
+    <!-- ========================================== -->
+
+    <!-- Regola 1: User accede a Dashboard -->
+    <Rule RuleId="AllowUserDashboard" Effect="Permit">
+        <Target>
+            <Resources><Resource>/dashboard</Resource></Resources>
+            <Subjects>
+                <Subject>
+                    <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ROLE_USER</AttributeValue>
+                    </SubjectMatch>
+                </Subject>
+            </Subjects>
+        </Target>
+    </Rule>
+
+    <!-- Regola 2: Admin accede a Dashboard -->
+    <Rule RuleId="AllowAdminDashboard" Effect="Permit">
+        <Target>
+            <Resources><Resource>/dashboard</Resource></Resources>
+            <Subjects>
+                <Subject>
+                    <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ROLE_ADMIN</AttributeValue>
+                    </SubjectMatch>
+                </Subject>
+            </Subjects>
+        </Target>
+    </Rule>
+
+    <!-- ========================================== -->
+    <!-- REGOLE PER L'AREA GESTIONE (/gestisci)     -->
+    <!-- ========================================== -->
+
+    <!-- Regola 3: Admin accede a Gestione -->
+    <Rule RuleId="AllowAdminManagement" Effect="Permit">
+        <Target>
+            <Resources><Resource>/gestione</Resource></Resources>
+            <Subjects>
+                <Subject>
+                    <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ROLE_ADMIN</AttributeValue>
+                    </SubjectMatch>
+                </Subject>
+            </Subjects>
+        </Target>
+    </Rule>
+
+    <!-- ========================================== -->
+    <!-- REGOLE PER L'AREA ORDINI (/ordina)         -->
+    <!-- ========================================== -->
+
+    <!-- Regola 4: User accede a Ordini -->
+    <Rule RuleId="AllowUserOrders" Effect="Permit">
+        <Target>
+            <Resources><Resource>/ordini</Resource></Resources>
+            <Subjects>
+                <Subject>
+                    <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ROLE_USER</AttributeValue>
+                    </SubjectMatch>
+                </Subject>
+            </Subjects>
+        </Target>
+    </Rule>
+
+    <!-- Regola 5: Admin accede ANCHE a Ordini -->
+    <Rule RuleId="AllowAdminOrders" Effect="Permit">
+        <Target>
+            <Resources><Resource>/ordini</Resource></Resources>
+            <Subjects>
+                <Subject>
+                    <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+                        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">ROLE_ADMIN</AttributeValue>
+                    </SubjectMatch>
+                </Subject>
+            </Subjects>
+        </Target>
+    </Rule>
+
+    <!-- Default: Nega tutto il resto -->
+    <Rule RuleId="DenyOthers" Effect="Deny"/>
+</Policy>
