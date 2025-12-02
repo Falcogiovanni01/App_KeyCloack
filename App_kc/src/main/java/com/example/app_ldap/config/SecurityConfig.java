@@ -24,32 +24,70 @@ public class SecurityConfig {
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
                                 .authorizeHttpRequests(auth -> auth
-                                                // 1. Risorse statiche e Home (Pubbliche)
                                                 .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/error")
                                                 .permitAll()
-                                                // 2. Protezione Pagine basata sui Ruoli (letti da Keycloak)
                                                 .requestMatchers("/", "/home").permitAll()
                                                 .requestMatchers("/gestione").hasRole("ADMIN")
                                                 .requestMatchers("/dashboard", "/ordini").hasAnyRole("USER", "ADMIN")
                                                 .anyRequest().authenticated())
-                                .csrf(csrf -> csrf.disable()) // Opzionale, per semplicità
-                                // --- OAUTH2 LOGIN (Il cuore di Keycloak) ---
+                                .csrf(csrf -> csrf.disable())
                                 .oauth2Login(oauth2 -> oauth2
-                                                .defaultSuccessUrl("/dashboard", true) // Dopo il login su Keycloak,
+                                                .defaultSuccessUrl("/dashboard", true)
+                                                // INIZIO LOGICA MAPPING INLINE
                                                 .userInfoEndpoint(userInfo -> userInfo
-                                                                .userAuthoritiesMapper(userAuthoritiesMapper()) // per
-                                                                                                                // leggere
-                                                                                                                // i
-                                                                                                                // ruoli
+                                                                .userAuthoritiesMapper(authorities -> {
+                                                                        Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
 
-                                                ))
-                                // --- LOGOUT ---
-                                // Logout standard di Spring
+                                                                        System.out.println(
+                                                                                        "============== DEBUG LOGIN (INLINE) ==============");
+
+                                                                        authorities.forEach(authority -> {
+                                                                                if (authority instanceof OidcUserAuthority oidcUserAuthority) {
+                                                                                        Map<String, Object> userInfoMap = oidcUserAuthority
+                                                                                                        .getAttributes();
+                                                                                        // Dump per vedere cosa arriva
+                                                                                        // da Keycloak
+                                                                                        System.out.println(
+                                                                                                        "User Info Attributes: "
+                                                                                                                        + userInfoMap);
+
+                                                                                        Map<String, Object> realmAccess = (Map<String, Object>) userInfoMap
+                                                                                                        .get("realm_access");
+                                                                                        if (realmAccess != null) {
+                                                                                                Collection<String> roles = (Collection<String>) realmAccess
+                                                                                                                .get("roles");
+                                                                                                if (roles != null) {
+                                                                                                        mappedAuthorities
+                                                                                                                        .addAll(roles.stream()
+                                                                                                                                        .map(roleName -> {
+                                                                                                                                                String r = "ROLE_"
+                                                                                                                                                                + roleName.toUpperCase();
+                                                                                                                                                System.out.println(
+                                                                                                                                                                "Mappato: " + r); // Debug
+                                                                                                                                                                                  // singolo
+                                                                                                                                                                                  // ruolo
+                                                                                                                                                return new SimpleGrantedAuthority(
+                                                                                                                                                                r);
+                                                                                                                                        })
+                                                                                                                                        .collect(Collectors
+                                                                                                                                                        .toList()));
+                                                                                                }
+                                                                                        }
+                                                                                }
+                                                                        });
+
+                                                                        System.out.println("Ruoli finali assegnati: "
+                                                                                        + mappedAuthorities);
+                                                                        System.out.println(
+                                                                                        "==================================================");
+                                                                        return mappedAuthorities;
+                                                                }))
+                                // FINE LOGICA MAPPING INLINE
+                                )
                                 .logout(logout -> logout
                                                 .logoutSuccessUrl("/")
                                                 .permitAll());
 
-                                                
                 return http.build();
         }
 

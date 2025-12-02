@@ -45,6 +45,7 @@ public class IndexController {
 
     @GetMapping("/home")
     public String showHomePage() {
+
         return "home";
     }
 
@@ -55,7 +56,7 @@ public class IndexController {
     // --- 2. DASHBOARD ---
     @GetMapping("/dashboard")
     public String showDashboard(Authentication auth, Model model) {
-        System.out.println("---- DASHBOARD ACCESS:"+ auth.toString());
+        System.out.println("---- DASHBOARD ACCESS:" + auth.toString());
         String role = getUserRole(auth);
 
         // Controllo XACML (Autorizzazione basata su attributi/ruoli)
@@ -66,7 +67,7 @@ public class IndexController {
             // Recupera il nome utente dal token OIDC (Keycloak)
             String username = auth.getName();
             if (auth.getPrincipal() instanceof OidcUser oidcUser) {
-                username = oidcUser.getPreferredUsername(); // Nome più leggibile (es. mrossi)
+                username = oidcUser.getPreferredUsername();
             }
 
             model.addAttribute("username", username);
@@ -160,13 +161,40 @@ public class IndexController {
 
     // --- UTILITY ---
     // Estrae il ruolo dal token OAuth2/OIDC mappato in SecurityConfig
+    // private String getUserRole(Authentication auth) {
+    // if (auth == null)
+    // return "GUEST";
+    // return auth.getAuthorities().stream()
+    // .map(GrantedAuthority::getAuthority)
+    // .filter(a -> a.startsWith("ROLE_"))
+    // .findFirst()
+    // .orElse("ROLE_USER");
+    // }
     private String getUserRole(Authentication auth) {
-        if (auth == null)
+        if (auth == null) {
             return "GUEST";
-        return auth.getAuthorities().stream()
+        }
+
+        // Se hai ADMIN, dai priorità ad ADMIN
+        boolean isAdmin = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .filter(a -> a.startsWith("ROLE_"))
-                .findFirst()
-                .orElse("ROLE_USER");
+                .anyMatch(a -> a.equals("ROLE_ADMIN"));
+
+        if (isAdmin) {
+            return "ROLE_ADMIN";
+        }
+
+        // Altrimenti, se hai USER, usa USER
+        boolean isUser = auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(a -> a.equals("ROLE_USER"));
+
+        if (isUser) {
+            return "ROLE_USER";
+        }
+
+        // Tutto il resto (default-roles, offline_access, ecc.) lo ignori
+        return "GUEST";
     }
+
 }
