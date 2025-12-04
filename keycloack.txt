@@ -3,7 +3,7 @@ prima di iniziare crea un realm = la tua azienda.
 client secret: AkdFTCphThaxgFIWWjjOBD1gzuohsmwN
 
 # Variabili d'ambiente per Docker
-VAULT_TOKEN= babaPerinoXKSKS
+VAULT_TOKEN = babaPerinoXKSKS
 MONGO_ROOT_PASSWORD=PascalShow$%!77
-KEYCLOAK_PASSWORD=Charlotte%10
+KEYCLOACK_PASSWORD=Charlotte%10
 KEYCLOACK_CLIENT_SECRET

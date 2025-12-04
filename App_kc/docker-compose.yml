@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   # --- 1. KEYCLOAK (Spostato su 8180) ---
-  keycloak:
-    image: quay.io/keycloak/keycloak:24.0.1
-    container_name: mensa-keycloak
+  keycloack:
+    image: quay.io/keycloack/keycloack:24.0.1
+    container_name: mensa-keycloack
     command: start-dev
     environment:
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KEYCLOACK_ADMIN: admin
+      KEYCLOACK_ADMIN_PASSWORD: ${KEYCLOACK_PASSWORD}
       
       # --- CONFIGURAZIONE RETE (Corretta) ---
       # Abilita HTTP (niente HTTPS in locale)
@@ -24,7 +24,7 @@ services:
       # Mappa la porta 8180 del tuo PC alla 8080 del container
       - "8180:8080" 
     volumes:
-      - ./dati_keycloak:/opt/keycloak/data/
+      - ./dati_keycloack:/opt/keycloack/data/
 
   # --- 2. MONGODB ---
   mongodb:
