@@ -54,6 +54,22 @@ services:
     depends_on:
       - mongodb
 
+# VAULT
+# --- 4. HASHICORP VAULT ---
+  vault:
+    image: hashicorp/vault:1.13.3
+    container_name: mensa-vault
+    ports:
+      - "8200:8200"
+    environment:
+      # Imposta Vault in modalità DEV (tutto in memoria, niente unseal manuale)
+      VAULT_DEV_ROOT_TOKEN_ID: roottoken 
+      VAULT_ADDR: 'http://0.0.0.0:8200'
+      VAULT_API_ADDR: 'http://0.0.0.0:8200'
+    cap_add:
+      - IPC_LOCK
+
+
 volumes:
   mongo_data:
   # Ho rimosso ldap_data e ldap_config perché non li usiamo più

@@ -3,6 +3,7 @@ package com.example.app_ldap.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -35,6 +36,10 @@ public class IndexController {
 
     @Autowired
     private MenuService menuService;
+
+    // 1. Prendi il segreto da Vault
+    @Value("${app.secret}")
+    private String secretFromVault;
 
     // --- 1. HOME & LOGIN ---
 
@@ -157,6 +162,15 @@ public class IndexController {
     public String deletePiatto(@PathVariable String id) {
         menuService.deletePiatto(id);
         return "redirect:/gestione?delete_success=true";
+    }
+
+    @GetMapping("/")
+    public String home(Model model) {
+        // 2. Passi il segreto all'HTML
+        model.addAttribute("messaggioSegreto", secretFromVault);
+
+        // 3. Restituisci il nome del file HTML (senza .html)
+        return "index";
     }
 
     // --- UTILITY ---
