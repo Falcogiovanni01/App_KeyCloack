@@ -8,7 +8,7 @@ services:
     command: start-dev
     environment:
       KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN_PASSWORD: .${KEYCLOAK_PASSWORD}
       
       # --- CONFIGURAZIONE RETE (Corretta) ---
       # Abilita HTTP (niente HTTPS in locale)
@@ -47,7 +47,7 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: rootpassword
       ME_CONFIG_MONGODB_URL: mongodb://root:rootpassword@mongodb:27017/
       ME_CONFIG_BASICAUTH_USERNAME: admin
-      ME_CONFIG_BASICAUTH_PASSWORD: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: .${MONGO_ROOT_PASSWORD}
       # Ho rimosso KC_HOSTNAME_URL da qui, non c'entrava con Mongo Express
     ports:
       - "8082:8081"
@@ -63,7 +63,7 @@ services:
       - "8200:8200"
     environment:
       # Imposta Vault in modalità DEV (tutto in memoria, niente unseal manuale)
-      VAULT_DEV_ROOT_TOKEN_ID: roottoken 
+      VAULT_DEV_ROOT_TOKEN_ID: .${VAULT_TOKEN} 
       VAULT_ADDR: 'http://0.0.0.0:8200'
       VAULT_API_ADDR: 'http://0.0.0.0:8200'
     cap_add:
@@ -72,4 +72,4 @@ services:
 
 volumes:
   mongo_data:
-  # Ho rimosso ldap_data e ldap_config perché non li usiamo più
+  

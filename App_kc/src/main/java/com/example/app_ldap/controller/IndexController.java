@@ -164,7 +164,8 @@ public class IndexController {
         return "redirect:/gestione?delete_success=true";
     }
 
-    @GetMapping("/")
+    // DA SISTEMARE.
+    @GetMapping("/test-vault")
     public String home(Model model) {
         // 2. Passi il segreto all'HTML
         model.addAttribute("messaggioSegreto", secretFromVault);
